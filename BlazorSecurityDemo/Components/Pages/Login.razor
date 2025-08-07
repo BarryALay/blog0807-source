@@ -1,0 +1,75 @@
+﻿@page "/login"
+
+@using System.Runtime.InteropServices;
+@inject AuthenticationStateProvider AuthenticationStateProvider
+@inject NavigationManager NavigationManager
+
+<PageTitle>Log in</PageTitle>
+
+<h1>Please log in to @serverName (@serverType) </h1>
+
+<div>
+    <section>
+        <StatusMessage Message="@passwordErrorMessage"/>
+        <EditForm Model="passwordInput" method="post" OnValidSubmit="LoginWithPassword" FormName="loginWithPassword">
+            <DataAnnotationsValidator/>
+            <h2>Use a server username and password to log in.</h2>
+            <hr/>
+
+            <ValidationSummary class="text-danger" role="alert"/>
+
+            <div class="form-floating mb-3">
+                <InputText @bind-Value="passwordInput.Username" class="form-control" autocomplete="username" aria-required="true" placeholder="username"/>
+                <label for="username" class="form-label">Username</label>
+                <ValidationMessage For="() => passwordInput.Username" class="text-danger"/>
+            </div>
+
+            <div class="form-floating mb-3">
+                <InputText type="password" @bind-Value="passwordInput.Password" class="form-control" autocomplete="password" aria-required="true" placeholder="password"/>
+                <label for="password" class="form-label">Password</label>
+                <ValidationMessage For="() => passwordInput.Password" class="text-danger"/>
+            </div>
+
+            <div>
+                <button type="submit" class="w-100 btn btn-log btn-primary">Log in</button>
+            </div>
+        </EditForm>
+    </section>
+</div>
+
+@code {
+    private string? serverName = Environment.MachineName;
+    private string? serverType = RuntimeInformation.RuntimeIdentifier;
+    private string? passwordErrorMessage = string.Empty;
+
+    [SupplyParameterFromForm(FormName = "loginWithPassword")]
+    private PasswordInputModel passwordInput { get; set; } = new();
+
+    protected async Task LoginWithPassword()
+    {
+        if (AuthenticationStateProvider is UserAuthenticationStateProvider auth)
+        {
+            var success = await auth.AuthenticateUserPasswordAsync(passwordInput.Username, passwordInput.Password);
+
+            if (success)
+            {
+                passwordErrorMessage = "Logged in";
+                NavigationManager.NavigateTo("userDetails");
+            }
+            else
+            {
+                passwordErrorMessage = "Error: invalid username/password";
+            }
+        }
+    }
+
+    private sealed class PasswordInputModel
+    {
+        [Required]
+        public string Username { get; set; } = string.Empty;
+
+        [Required]
+        [DataType(DataType.Password)]
+        public string Password { get; set; } = string.Empty;
+    }
+}
