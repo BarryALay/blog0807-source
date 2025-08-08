@@ -2,9 +2,17 @@
 {
     public class LinuxAuthenticationManager : ServerAuthenticationManager
     {
+        /// <summary>
+        /// Verify username and password for Linux server.
+        /// </summary>
+        /// <param name="username">Linux username</param>
+        /// <param name="password">Linux password</param>
+        /// <returns></returns>
         public override async Task<UserAuthenticationDetails> CheckPasswordAsync(string username, string password)
         {
+            //
             // validate password against what is in /etc/shadow
+            //
 
             using StringWriter shadowsw = new();
             using StringWriter errorssw = new();

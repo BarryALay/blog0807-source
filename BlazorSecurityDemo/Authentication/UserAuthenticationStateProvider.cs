@@ -13,6 +13,13 @@ namespace BlazorSecurityDemo.Authentication
             return Task.FromResult(authenticationState);
         }
 
+        /// <summary>
+        /// Validate the supplied username and password on the server.
+        /// Update the current <see cref="AuthenticationState"/> with the results.
+        /// </summary>
+        /// <param name="username">Username on server</param>
+        /// <param name="password">Password on server</param>
+        /// <returns></returns>
         public async Task<bool> AuthenticateUserPasswordAsync(string username, string password)
         {
             // verify username and password
@@ -33,6 +40,9 @@ namespace BlazorSecurityDemo.Authentication
             return true;
         }
 
+        /// <summary>
+        /// Clear current <see cref="AuthenticationState"/>.
+        /// </summary>
         public void Logout()
         {
             NotifyAuthenticationStateChanged(Task.FromResult(new AuthenticationState(new ClaimsPrincipal())));

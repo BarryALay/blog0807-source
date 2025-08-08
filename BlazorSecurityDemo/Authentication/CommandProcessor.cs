@@ -4,8 +4,25 @@ using System.Security;
 
 namespace BlazorSecurityDemo.Authentication
 {
+    /// <summary>
+    /// Process commands using the server's command shell.
+    /// From: https://stackoverflow.com/questions/139593/processstartinfo-hanging-on-waitforexit-why
+    /// </summary>
     public static class CommandProcessor
     {
+        /// <summary>
+        /// Start a shell command.
+        /// </summary>
+        /// <param name="command">Shell command.</param>
+        /// <param name="shell">Optional name of shell.  Defaults to basic shell for OS.</param>
+        /// <param name="workingDirectory">Working directory for process</param>
+        /// <param name="userid">Userid to run command under.  Only valid for Windows platform.</param>
+        /// <param name="password">Password for userid.  Only valid for Windows platform.</param>
+        /// <param name="timeout">Process timeout in milliseconds</param>
+        /// <param name="outputTextWriter">Writer for standard output</param>
+        /// <param name="errorTextWriter">Writer for standard error</param>
+        /// <returns>The exit code from the command, or -1 if the userid/password is incorrect</returns>
+        /// <exception cref="NotImplementedException">Current operating system is not supported.</exception>
         public static Task<int> StartCommand(
             string command,
             string? shell = null,
@@ -44,6 +61,18 @@ namespace BlazorSecurityDemo.Authentication
                 );
         }
 
+        /// <summary>
+        /// Start a command shell process.
+        /// </summary>
+        /// <param name="filename">Name of command</param>
+        /// <param name="arguments">Command-line arguments for command</param>
+        /// <param name="workingDirectory">Working directory for process</param>
+        /// <param name="userid">Userid to run command under.  Only valid for Windows platform.</param>
+        /// <param name="password">Password for userid.  Only valid for Windows platform.</param>
+        /// <param name="timeout">Process timeout in milliseconds</param>
+        /// <param name="outputTextWriter">Writer for standard output</param>
+        /// <param name="errorTextWriter">Writer for standard error</param>
+        /// <returns>The exit code from the command, or -1 if the userid/password is incorrect</returns>
         public static async Task<int> StartProcess(
             string filename,
             string arguments,
@@ -127,6 +156,13 @@ namespace BlazorSecurityDemo.Authentication
             return process.ExitCode;
         }
 
+        /// <summary>
+        /// Waits asynchronously for the process to exit.
+        /// </summary>
+        /// <param name="process">The process to wait for cancellation.</param>
+        /// <param name="cancellationToken">A cancellation token. If invoked, the task will return
+        /// immediately as cancelled.</param>
+        /// <returns>A Task representing waiting for the process to end.</returns>
         public static Task WaitForExitAsync(
             this Process process,
             CancellationToken cancellationToken = default)
@@ -156,6 +192,15 @@ namespace BlazorSecurityDemo.Authentication
             return taskCompletionSource.Task;
         }
 
+        /// <summary>
+        /// Reads the data from the specified data recieved event and writes it to the
+        /// <paramref name="textWriter"/>.
+        /// </summary>
+        /// <param name="addHandler">Adds the event handler.</param>
+        /// <param name="removeHandler">Removes the event handler.</param>
+        /// <param name="textWriter">The text writer.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns>A task representing the asynchronous operation.</returns>
         public static Task ReadAsync(
             this Action<DataReceivedEventHandler> addHandler,
             Action<DataReceivedEventHandler> removeHandler,

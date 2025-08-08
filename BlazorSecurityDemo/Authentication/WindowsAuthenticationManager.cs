@@ -4,6 +4,12 @@ namespace BlazorSecurityDemo.Authentication
 {
     public partial class WindowsAuthenticationManager : ServerAuthenticationManager
     {
+        /// <summary>
+        /// Verify username and password for Windows system.
+        /// </summary>
+        /// <param name="username">Username on Windows</param>
+        /// <param name="password">Password on Windows</param>
+        /// <returns></returns>
         public override async Task<UserAuthenticationDetails> CheckPasswordAsync(string username, string password)
         {
             using StringWriter sw = new();
@@ -82,6 +88,7 @@ namespace BlazorSecurityDemo.Authentication
             }
         }
 
+        // from ridgerunner response: https://stackoverflow.com/questions/3268622/regex-to-split-line-csv-file
         [GeneratedRegex(@"
             # Parse CSV line. Capture next value in named group: 'val'
             \s*                      # Ignore leading whitespace.
